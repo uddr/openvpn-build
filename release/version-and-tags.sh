@@ -17,61 +17,61 @@ pushd "$TOP_DIR"
 # Setting the language is needed for Debian changelog generation
 LANG=en_us.UTF-8
 
-###########
-# OpenVPN #
-###########
-
-# We assume openvpn is already tagged
-git -C "$OPENVPN" checkout -f "$OPENVPN_CURRENT_TAG"
-git add "$OPENVPN"
-# We assume ovpn-dco is already tagged
-git -C "$OPENVPN_DCO" checkout -f "$OPENVPN_DCO_CURRENT_TAG"
-git add "$OPENVPN_DCO"
-
-create_debian_changelog() {
-    local pkg_name=$1
-    local pkg_version=$2
-    local git_dir=$3
-    local git_log=$4
-    local changelog_file="$DEBIAN/$pkg_name/changelog-${pkg_version}"
-    echo "$pkg_name (${pkg_version}-debian0) stable; urgency=medium" > "$changelog_file"
-    echo >> "$changelog_file"
-    git -C "$git_dir" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
-        "$git_log" >> "$changelog_file"
-    echo >> "$changelog_file"
-    local commit_date=$(git -C "$git_dir" log --no-show-signature -n1 --format="%cD")
-    echo " -- $GIT_AUTHOR  $commit_date" >> "$changelog_file"
-
-    git add "$changelog_file"
-}
-
-# Create changelog for openvpn Debian packages
-create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
-                        "$OPENVPN_PREVIOUS_TAG..$OPENVPN_CURRENT_TAG"
-# Create changelog for openvpn-dco-dkms Debian packages
-create_debian_changelog openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
-                        "$OPENVPN_DCO_PREVIOUS_TAG..$OPENVPN_DCO_CURRENT_TAG"
-
-###############
-# OpenVPN GUI #
-###############
-
-pushd "$OPENVPN_GUI"
-# We do not update the git checkout here, we trust the submodule to be the state you want.
-
-# openvpn-gui is not usually tagged already
-# Update minor version in configure.ac
-sed -E -i s/"define\(\[_GUI_VERSION_MINOR\], \[([[:digit:]]+)\]\)"/"define\(\[_GUI_VERSION_MINOR\], \[$OPENVPN_GUI_CURRENT_MIN_VERSION\]\)"/1 configure.ac
-# if configure.ac was already updated, assume everything is fine as is
-if ! git diff --exit-code; then
-    git add configure.ac
-    git commit --author="$GIT_AUTHOR" -s -m "Bump version to $OPENVPN_GUI_CURRENT_FULL_VERSION" configure.ac
-    git tag -a "v$OPENVPN_GUI_CURRENT_FULL_VERSION" -m "Version $OPENVPN_GUI_CURRENT_FULL_VERSION"
-    git tag -a "OpenVPN-$BUILD_VERSION" -m "OpenVPN-$BUILD_VERSION"
-    git -C "$TOP_DIR" add "$OPENVPN_GUI"
-fi
-
-popd
+############
+## OpenVPN #
+############
+#
+## We assume openvpn is already tagged
+#git -C "$OPENVPN" checkout -f "$OPENVPN_CURRENT_TAG"
+#git add "$OPENVPN"
+## We assume ovpn-dco is already tagged
+#git -C "$OPENVPN_DCO" checkout -f "$OPENVPN_DCO_CURRENT_TAG"
+#git add "$OPENVPN_DCO"
+#
+#create_debian_changelog() {
+#    local pkg_name=$1
+#    local pkg_version=$2
+#    local git_dir=$3
+#    local git_log=$4
+#    local changelog_file="$DEBIAN/$pkg_name/changelog-${pkg_version}"
+#    echo "$pkg_name (${pkg_version}-debian0) stable; urgency=medium" > "$changelog_file"
+#    echo >> "$changelog_file"
+#    git -C "$git_dir" log --pretty=short --abbrev-commit --format="  * %s (%an, %h)" \
+#        "$git_log" >> "$changelog_file"
+#    echo >> "$changelog_file"
+#    local commit_date=$(git -C "$git_dir" log --no-show-signature -n1 --format="%cD")
+#    echo " -- $GIT_AUTHOR  $commit_date" >> "$changelog_file"
+#
+#    git add "$changelog_file"
+#}
+#
+## Create changelog for openvpn Debian packages
+#create_debian_changelog openvpn "$DEBIAN_UPSTREAM_VERSION" "$OPENVPN" \
+#                        "$OPENVPN_PREVIOUS_TAG..$OPENVPN_CURRENT_TAG"
+## Create changelog for openvpn-dco-dkms Debian packages
+#create_debian_changelog openvpn-dco-dkms "$OPENVPN_DCO_CURRENT_VERSION" "$OPENVPN_DCO" \
+#                        "$OPENVPN_DCO_PREVIOUS_TAG..$OPENVPN_DCO_CURRENT_TAG"
+#
+################
+## OpenVPN GUI #
+################
+#
+#pushd "$OPENVPN_GUI"
+## We do not update the git checkout here, we trust the submodule to be the state you want.
+#
+## openvpn-gui is not usually tagged already
+## Update minor version in configure.ac
+#sed -E -i s/"define\(\[_GUI_VERSION_MINOR\], \[([[:digit:]]+)\]\)"/"define\(\[_GUI_VERSION_MINOR\], \[$OPENVPN_GUI_CURRENT_MIN_VERSION\]\)"/1 configure.ac
+## if configure.ac was already updated, assume everything is fine as is
+#if ! git diff --exit-code; then
+#    git add configure.ac
+#    git commit --author="$GIT_AUTHOR" -s -m "Bump version to $OPENVPN_GUI_CURRENT_FULL_VERSION" configure.ac
+#    git tag -a "v$OPENVPN_GUI_CURRENT_FULL_VERSION" -m "Version $OPENVPN_GUI_CURRENT_FULL_VERSION"
+#    git tag -a "OpenVPN-$BUILD_VERSION" -m "OpenVPN-$BUILD_VERSION"
+#    git -C "$TOP_DIR" add "$OPENVPN_GUI"
+#fi
+#
+#popd
 
 ###############
 # OpenVPN MSI #

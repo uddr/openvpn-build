@@ -22,18 +22,18 @@ pushd "$TOP_DIR"
 . "$SCRIPT_DIR/vars.infrastructure"
 
 $SCRIPT_DIR/version-and-tags.sh
-read -p "push OpenVPN-$BUILD_VERSION in openvpn-gui?"
-git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
-    HEAD:master \
-    "v$OPENVPN_GUI_CURRENT_FULL_VERSION" \
-    "OpenVPN-$BUILD_VERSION"
-# make sure git knows we pushed this
-git -C $TOP_DIR/src/openvpn-gui remote update
-#TODO: make idempotent
-$SCRIPT_DIR/create-release-files.sh
-read -p "Upload tarballs to $SECONDARY_WEBSERVER?"
-# uploads tarballs, required by some build steps
-$SCRIPT_DIR/sign-and-push.sh
+#read -p "push OpenVPN-$BUILD_VERSION in openvpn-gui?"
+#git -C $TOP_DIR/src/openvpn-gui push "$INTERNAL_GIT_REPO_GUI_RW" \
+#    HEAD:master \
+#    "v$OPENVPN_GUI_CURRENT_FULL_VERSION" \
+#    "OpenVPN-$BUILD_VERSION"
+## make sure git knows we pushed this
+#git -C $TOP_DIR/src/openvpn-gui remote update
+##TODO: make idempotent
+#$SCRIPT_DIR/create-release-files.sh
+#read -p "Upload tarballs to $SECONDARY_WEBSERVER?"
+## uploads tarballs, required by some build steps
+#$SCRIPT_DIR/sign-and-push.sh
 
 # git push tag to github, but not official repo!
 git push "$INTERNAL_GIT_REPO_BUILD_RW" "OpenVPN-$BUILD_VERSION"

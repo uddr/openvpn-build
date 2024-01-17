@@ -42,4 +42,4 @@ mkdir -p "$OUTPUT/upload/"
 scp "$WINDOWS_MSI_BUILDHOST":"$WINDOWS_MSI_WORKDIR/windows-msi/image/OpenVPN-${BUILD_VERSION}"-*.msi "$OUTPUT/upload/"
 read -p "Upload MSIs to $SECONDARY_WEBSERVER?"
 # upload MSIs
-$SCRIPT_DIR/sign-and-push.sh
+#$SCRIPT_DIR/sign-and-push.sh
